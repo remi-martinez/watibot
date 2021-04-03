@@ -89,8 +89,8 @@ client.on("message", async function (message) {
     }
 
     if (!message.content.startsWith(prefix) && message.content.toLowerCase().includes("wati")) {
-        const pos = message.content.search("wati")
-        const srch = message.content.toLowerCase().substring(pos + 4)
+        const pos = message.content.search("wati");
+        const srch = message.content.toLowerCase().substring(pos + 4);
 
         let embed = await waticherche(srch, message)
         message.channel.send(embed)
