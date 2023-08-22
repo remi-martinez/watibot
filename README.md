@@ -9,4 +9,5 @@ Usage
 * Add the bot to your server
 * Send "wati \*" in any channel (replace \* with any word)
 * The bot writes a funny sentence and send and image related to your query! Like so :  
-![image](https://user-images.githubusercontent.com/64494563/128149752-264c20ac-1264-4d8e-af6d-1f0f22bf1ef2.png)
+![image](https://github.com/remi-martinez/watibot/assets/64494563/a962a179-ace6-4083-b628-6dfe7e636e98)
+
