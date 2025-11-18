@@ -28,4 +28,4 @@ Run locally
 Deployment
 ---
 
-For further information, check DEPLOYMENT.md
+For further information, check [DEPLOYMENT.md](DEPLOYMENT.md)
