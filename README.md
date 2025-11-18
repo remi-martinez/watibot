@@ -24,3 +24,8 @@ Run locally
     - GOOGLE_API_KEY : A custom Google Search Engine API Key generated [here](https://programmablesearchengine.google.com/controlpanel/all)
     - GOOGLE_SEARCH_ENGINE : A custom Google Search Engine public ID generated [here](https://programmablesearchengine.google.com/controlpanel/all)
 4. `npm run start`
+
+Deployment
+---
+
+For further information, check DEPLOYMENT.md
