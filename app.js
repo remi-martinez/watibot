@@ -1,53 +1,85 @@
-const Discord = require('discord.js');
+const { Client, GatewayIntentBits, Events, Collection, EmbedBuilder, REST, Routes } = require('discord.js');
 const Utils = require('./utils');
-const client = new Discord.Client();
-const dotenv = require('dotenv').config()
+const dotenv = require('dotenv').config();
 
 const CLIENT_KEY = process.env.CLIENT_KEY;
-const prefix = "/";
+const CLIENT_ID = process.env.CLIENT_ID;
 
-client.on("ready", () => {
-    client.user.setActivity("les clips de Maitre Gims", { type: "WATCHING"}) // pour le statut du bot 
-    console.log("Mon WatiBOT est Connecté !"); //
-})
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent
+    ]
+});
 
-// Message callback function
-
-client.on("message", async function (message) {
-
-    if (message.author.bot) return;
-
-    // MESSAGES SANS PREFIXE
-
-    if (message.content === "Salut") { // Lorsque "Salut" est envoyé
-        message.channel.send("Salut mon Wati-pote!")
-        message.channel.send("https://tenor.com/view/vianney-ma%C3%AEtre-gims-danse-gif-11679190")
+// Register slash commands
+const commands = [
+    {
+        name: 'bg',
+        description: 'Le bot te salue!'
+    },
+    {
+        name: 'wati',
+        description: 'Cherche quelque chose avec Wati',
+        options: [
+            {
+                name: 'recherche',
+                type: 3, // STRING type
+                description: 'Ce que tu veux chercher',
+                required: true
+            }
+        ]
     }
-    if (message.content.toLowerCase() === "bonne journée" || message.content.toLowerCase() === "bonne journee"){
-        message.channel.send("https://tenor.com/view/yass-gif-20014661")
-        message.channel.send("Passe une bonne journée mon Wati-frérot !")
+];
+
+client.once(Events.ClientReady, async () => {
+    console.log("Mon WatiBOT est Connecté !");
+    client.user.setActivity("Regarde les clips de Maitre Gims", { type: 3 }); // type 3 = WATCHING
+    
+    // Register slash commands
+    const rest = new REST({ version: '10' }).setToken(CLIENT_KEY);
+    
+    try {
+        console.log('Enregistrement des commandes slash...');
+
+        await rest.put(
+            Routes.applicationCommands(CLIENT_ID),
+            { body: commands }
+        );
+        
+        console.log('Commandes slash enregistrées avec succès!');
+    } catch (error) {
+        console.error('Erreur lors de l\'enregistrement des commandes:', error);
+    }
+});
+
+client.on(Events.InteractionCreate, async interaction => {
+    if (!interaction.isChatInputCommand()) return;
+
+    const { commandName } = interaction;
+
+    if (commandName === 'bg') {
+        await interaction.reply(`Bien ou quoi ${interaction.user.toString()}`);
     }
 
-    if (!message.content.startsWith(prefix) && message.content.toLowerCase().includes("wati")) {
-        const pos = message.content.search("wati");
-        const srch = message.content.toLowerCase().substring(pos + 4);
-
-        let embed = await Utils.watiCherche(srch, message)
-        message.channel.send(embed)
+    if (commandName === 'wati') {
+        const recherche = interaction.options.getString('recherche');
+        
+        await interaction.deferReply();
+        
+        try {
+            const embed = await Utils.watiCherche(recherche, interaction);
+            await interaction.editReply({ embeds: [embed] });
+        } catch (error) {
+            console.error('Erreur lors de la recherche Wati:', error);
+            await interaction.editReply('Une erreur est survenue lors de la recherche.');
+        }
     }
+});
 
-    if (!message.content.startsWith(prefix)) return;
-
-    // MESSAGES AVEC PREFIXE
-
-    const commandBody = message.content.slice(prefix.length);
-    const args = commandBody.split(' ');
-    const command = args.shift().toLowerCase();
-    const command2 = args.splice(1,1).shift();
-
-    if (command === "bg") {
-    message.channel.send("Bien ou quoi " + message.author.toString())                
-    }
+client.on(Events.Error, error => {
+    console.error('Erreur du client Discord:', error);
 });
 
 client.login(CLIENT_KEY);
